@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { FeedService } from './feed.service';
 import { PostDto } from './dto/post.dto';
@@ -18,8 +19,12 @@ export class FeedController {
   constructor(private feedService: FeedService) {}
 
   @Get()
-  findAllPosts(): Observable<FeedPost[]> {
-    return this.feedService.findAllPosts();
+  findAllPosts(
+    @Query('take') take = 1,
+    @Query('skip') skip = 1,
+  ): Observable<FeedPost[]> {
+    take = take > 20 ? 20 : take;
+    return this.feedService.findAllPosts(take, skip);
   }
 
   @Post()

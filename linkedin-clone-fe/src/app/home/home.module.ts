@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
@@ -11,6 +12,7 @@ import { ProfileSummaryComponent } from './components/profile-summary/profile-su
 import { StartPostComponent } from './components/start-post/start-post.component';
 import { AdvertisingComponent } from './components/advertising/advertising.component';
 import { ModalComponent } from './components/start-post/modal/modal.component';
+import { AllPostsComponent } from './components/all-posts/all-posts.component';
 
 
 @NgModule({
@@ -18,7 +20,8 @@ import { ModalComponent } from './components/start-post/modal/modal.component';
     CommonModule,
     FormsModule,
     IonicModule,
-    HomePageRoutingModule
+    HomePageRoutingModule,
+    HttpClientModule
   ],
   declarations: [
     HomePage,
@@ -27,7 +30,8 @@ import { ModalComponent } from './components/start-post/modal/modal.component';
     ProfileSummaryComponent,
     StartPostComponent,
     AdvertisingComponent,
-    ModalComponent
+    ModalComponent,
+    AllPostsComponent
   ]
 })
 export class HomePageModule {}

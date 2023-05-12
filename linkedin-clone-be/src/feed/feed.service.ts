@@ -16,8 +16,8 @@ export class FeedService {
     return from(this.feedRepository.save(postDto));
   }
 
-  findAllPosts(): Observable<FeedPost[]> {
-    return from(this.feedRepository.find());
+  findAllPosts(take = 10, skip = 0): Observable<FeedPost[]> {
+    return from(this.feedRepository.find({ take, skip }));
   }
 
   updatePost(id: number, postDto: PostDto): Observable<UpdateResult> {
