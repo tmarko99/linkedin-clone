@@ -1,0 +1,7 @@
+{
+  "name": "linkedin-clone-fe",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
