@@ -4,6 +4,7 @@ import { FeedPost } from './post.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { PostDto } from './dto/post.dto';
 import { Observable, from } from 'rxjs';
+import { User } from '../auth/entities/user.entity';
 
 @Injectable()
 export class FeedService {
@@ -12,12 +13,23 @@ export class FeedService {
     private readonly feedRepository: Repository<FeedPost>,
   ) {}
 
-  createPost(postDto: PostDto): Observable<FeedPost> {
-    return from(this.feedRepository.save(postDto));
+  createPost(postDto: PostDto, author: User): Observable<FeedPost> {
+    return from(this.feedRepository.save({ ...postDto, author }));
   }
 
   findAllPosts(take = 10, skip = 0): Observable<FeedPost[]> {
     return from(this.feedRepository.find({ take, skip }));
+  }
+
+  findPostById(id: number): Observable<FeedPost> {
+    return from(
+      this.feedRepository.findOne({
+        where: {
+          id,
+        },
+        relations: ['author'],
+      }),
+    );
   }
 
   updatePost(id: number, postDto: PostDto): Observable<UpdateResult> {

@@ -1,3 +1,5 @@
+import { User } from '../auth/entities/user.entity';
+import { GetUser } from './../auth/decorators/get-user.decorator';
 import { UpdateResult, DeleteResult } from 'typeorm';
 import {
   Body,
@@ -8,11 +10,17 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { FeedService } from './feed.service';
 import { PostDto } from './dto/post.dto';
 import { Observable } from 'rxjs';
 import { FeedPost } from './post.entity';
+import { JwtGuard } from 'src/auth/guards/jwt.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from 'src/auth/entities/role.enum';
+import { RolesGuard } from 'src/auth/guards/roles.guards';
+import { IsCreatorGuard } from './guards/is-creator.guard';
 
 @Controller('feed')
 export class FeedController {
@@ -27,11 +35,17 @@ export class FeedController {
     return this.feedService.findAllPosts(take, skip);
   }
 
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.ADMIN)
   @Post()
-  createPost(@Body() postDto: PostDto): Observable<FeedPost> {
-    return this.feedService.createPost(postDto);
+  createPost(
+    @Body() postDto: PostDto,
+    @GetUser() currentUser: User,
+  ): Observable<FeedPost> {
+    return this.feedService.createPost(postDto, currentUser);
   }
 
+  @UseGuards(JwtGuard, IsCreatorGuard)
   @Put('/:id')
   updatePost(
     @Param('id') id: number,
@@ -40,6 +54,7 @@ export class FeedController {
     return this.feedService.updatePost(id, postDto);
   }
 
+  @UseGuards(JwtGuard, IsCreatorGuard)
   @Delete('/:id')
   deletePost(@Param('id') id: number): Observable<DeleteResult> {
     return this.feedService.deletePost(id);

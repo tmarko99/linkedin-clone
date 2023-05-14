@@ -1,5 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { AuthService } from './services/auth.service';
+import { UserRegister } from './models/user-register.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-auth',
@@ -11,7 +14,7 @@ export class AuthPage implements OnInit {
 
   submissionType: 'login' | 'join' = 'login';
 
-  constructor() { }
+  constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit() {
 
@@ -22,10 +25,18 @@ export class AuthPage implements OnInit {
     if (!email || !password) return;
 
     if (this.submissionType === 'login') {
-
+      this.authService.login(email, password).subscribe(() => {
+        this.router.navigateByUrl('/home');
+      })
     } else if (this.submissionType === 'join') {
       const { firstName, lastName } = this.form.value;
       if (!firstName || !lastName) return;
+
+      const newUser: UserRegister = { firstName, lastName, email, password };
+
+      this.authService.register(newUser).subscribe(() => {
+        this.toggleText();
+      })
     }
 
   }
