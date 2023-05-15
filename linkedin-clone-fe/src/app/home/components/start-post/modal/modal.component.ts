@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 
 @Component({
@@ -8,6 +8,10 @@ import { ModalController } from '@ionic/angular';
 })
 export class ModalComponent  implements OnInit {
   @ViewChild('form') form: any;
+
+  @Input()
+  postId?: number;
+
   constructor(public modalController: ModalController) { }
 
   ngOnInit() {}
@@ -23,8 +27,7 @@ export class ModalComponent  implements OnInit {
 
     this.modalController.dismiss({
       post: {
-        body,
-        createdAt: new Date()
+        body
       }
     }, 'post');
   }

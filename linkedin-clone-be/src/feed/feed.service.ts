@@ -18,7 +18,15 @@ export class FeedService {
   }
 
   findAllPosts(take = 10, skip = 0): Observable<FeedPost[]> {
-    return from(this.feedRepository.find({ take, skip }));
+    return from(
+      this.feedRepository
+        .createQueryBuilder('post')
+        .innerJoinAndSelect('post.author', 'author')
+        .orderBy('post.createdAt', 'DESC')
+        .take(take)
+        .skip(skip)
+        .getMany(),
+    );
   }
 
   findPostById(id: number): Observable<FeedPost> {

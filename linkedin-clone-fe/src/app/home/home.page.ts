@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { PostService } from './services/post.service';
 
 @Component({
   selector: 'app-home',
@@ -6,7 +7,12 @@ import { Component } from '@angular/core';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
+  body = '';
 
-  constructor() {}
+  constructor(private postService: PostService) {}
+
+  onCreatePost(body: string) {
+    this.body = body;
+  }
 
 }

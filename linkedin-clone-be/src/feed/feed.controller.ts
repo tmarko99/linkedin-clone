@@ -35,8 +35,9 @@ export class FeedController {
     return this.feedService.findAllPosts(take, skip);
   }
 
-  @UseGuards(JwtGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  // @UseGuards(JwtGuard, RolesGuard)
+  // @Roles(Role.ADMIN)
+  @UseGuards(JwtGuard)
   @Post()
   createPost(
     @Body() postDto: PostDto,

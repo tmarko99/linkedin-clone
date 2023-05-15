@@ -21,6 +21,7 @@
               </div>
             </ion-col>
             <ion-col
+              *ngIf="(userId$ | async) === post.author.id"
               style="margin-top: -32px"
               class="ion-text-right">
               <ion-icon

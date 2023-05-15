@@ -11,16 +11,11 @@ import { UserResponse } from '../models/user-response.model';
 
 import jwt_decode from 'jwt-decode';
 
-
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private user$ = new BehaviorSubject<User>(null!);
-
-  // private httpOptions: { headers: HttpHeaders } = {
-  //   headers: new HttpHeaders({ 'Content-type' : 'application/json' }),
-  // }
 
   constructor(private httpClient: HttpClient, private router: Router) { }
 
@@ -37,6 +32,14 @@ export class AuthService {
     return this.user$.asObservable().pipe(
       switchMap((user: User) => {
         return of(user.role)
+      })
+    );
+  }
+
+  get userId(): Observable<number> {
+    return this.user$.asObservable().pipe(
+      switchMap((user: User) => {
+        return of(user.id)
       })
     );
   }
@@ -61,29 +64,6 @@ export class AuthService {
         })
       );
   }
-
-  // isTokenInStorage(): Observable<true | null | undefined> {
-  //   return from(
-  //     Preferences.get({
-  //       key: 'token',
-  //     })
-  //   ).pipe(
-  //     map((data: { value: string }) => {
-  //       if (!data || !data.value) return null;
-
-  //       const decodedToken: UserResponse = jwt_decode(data.value);
-  //       const jwtExpirationInMsSinceUnixEpoch = decodedToken.exp * 1000;
-  //       const isExpired =
-  //         new Date() > new Date(jwtExpirationInMsSinceUnixEpoch);
-
-  //       if (isExpired) return null;
-  //       if (decodedToken.user) {
-  //         this.user$.next(decodedToken.user);
-  //         return true;
-  //       }
-  //     })
-  //   );
-  // }
 
   isTokenInStorage(): Observable<boolean | null | undefined> {
     return from(Preferences.get({ key: 'token' })).pipe(
