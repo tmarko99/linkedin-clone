@@ -10,6 +10,8 @@ import {
   Post,
   Put,
   Query,
+  Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { FeedService } from './feed.service';
@@ -33,6 +35,13 @@ export class FeedController {
   ): Observable<FeedPost[]> {
     take = take > 20 ? 20 : take;
     return this.feedService.findAllPosts(take, skip);
+  }
+
+  @Get('/image/:fileName')
+  findImageByName(@Param('fileName') fileName: string, @Res() res) {
+    if (!fileName || ['null', '[null]'].includes(fileName)) return;
+
+    return res.sendFile(fileName, { root: './images' });
   }
 
   // @UseGuards(JwtGuard, RolesGuard)

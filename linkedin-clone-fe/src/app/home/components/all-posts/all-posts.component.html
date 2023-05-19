@@ -6,12 +6,12 @@
           <ion-row class="ion-align-items-center ion-justify-content-center">
             <ion-col size="auto" class="ion-padding">
               <ion-avatar style="cursor: pointer">
-                <ion-img [src]="$any(post).fullImagePath"></ion-img>
+                <ion-img *ngIf="post.fullImagePath" [src]="post.fullImagePath"></ion-img>
               </ion-avatar>
             </ion-col>
             <ion-col>
               <div style="cursor: pointer" class="full-name">
-               John Doe
+               {{ post.author.firstName }} {{ post.author.lastName }}
               </div>
               <div class="role">Full Stack Developer</div>
               <div class="meta-data">
@@ -25,10 +25,12 @@
               style="margin-top: -32px"
               class="ion-text-right">
               <ion-icon
+                (click)="presentUpdateModal(post.id)"
                 style="font-size: 18px; cursor: pointer"
                 color="dark"
                 name="create-outline"></ion-icon>
               <ion-icon
+                (click)="deletePost(post.id)"
                 style="font-size: 18px; cursor: pointer"
                 color="danger"
                 name="trash-outline"></ion-icon>

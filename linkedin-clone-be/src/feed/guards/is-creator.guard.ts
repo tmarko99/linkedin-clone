@@ -1,7 +1,7 @@
+import { UserService } from './../../auth/services/user.service';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { AuthService } from 'src/auth/services/auth.service';
 import { FeedService } from '../feed.service';
 import { User } from 'src/auth/entities/user.entity';
 import { FeedPost } from '../post.entity';
@@ -9,7 +9,7 @@ import { FeedPost } from '../post.entity';
 @Injectable()
 export class IsCreatorGuard implements CanActivate {
   constructor(
-    private authService: AuthService,
+    private userService: UserService,
     private feedService: FeedService,
   ) {}
 
@@ -27,7 +27,7 @@ export class IsCreatorGuard implements CanActivate {
     const userId = user.id;
     const feedId = params.id;
 
-    return this.authService.findUserById(userId).pipe(
+    return this.userService.findUserById(userId).pipe(
       switchMap((user: User) =>
         this.feedService.findPostById(feedId).pipe(
           map((feedPost: FeedPost) => {

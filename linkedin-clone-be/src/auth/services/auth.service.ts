@@ -55,23 +55,6 @@ export class AuthService {
     );
   }
 
-  findUserById(id: number): Observable<User> {
-    return from(
-      this.userRepository.findOne({
-        where: {
-          id,
-        },
-        relations: ['feedPosts'],
-      }),
-    ).pipe(
-      map((user: User) => {
-        delete user.password;
-
-        return user;
-      }),
-    );
-  }
-
   private hashPassword(password: string): Observable<string> {
     return from(bcrypt.hash(password, 12));
   }

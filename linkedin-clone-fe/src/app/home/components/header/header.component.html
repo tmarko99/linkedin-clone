@@ -33,7 +33,7 @@
           </ion-col>
           <ion-col (click)="presentPopover($event)" size="auto">
             <ion-avatar>
-              <ion-img src=""></ion-img>
+              <ion-img *ngIf="userFullImagePath" src="userFullImagePath"></ion-img>
             </ion-avatar>
             <div class="me">Me
               <ion-icon style="font-size: 16px;" name="caret-down-outline"></ion-icon>

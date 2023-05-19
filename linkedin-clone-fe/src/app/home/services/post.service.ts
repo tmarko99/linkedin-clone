@@ -1,16 +1,25 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { Post } from '../models/post';
 import { environment } from 'src/environments/environment';
+import { AuthService } from 'src/app/auth/services/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PostService {
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient, private authService: AuthService) {
+    this.authService.getUserImageName().pipe(
+      take(1),
+      tap(({ imageName }) => {
+        const defaultImagePath = 'blank-profile-picture.png';
+        this.authService.updateUserImagePath(imageName || defaultImagePath).subscribe();
+      })
+    ).subscribe();
+   }
 
   getPosts(params: any): Observable<Post[]> {
     return this.httpClient.get<Post[]>(`${environment.baseApiUrl}/feed${params}`);
