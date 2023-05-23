@@ -19,14 +19,14 @@ export class PopoverComponent  implements OnInit {
   constructor(private authService: AuthService) { }
 
   ngOnInit() {
+    this.userImagePathSubscription = this.authService.userFullImagePath
+    .subscribe((fullImagePath: string) => {
+      this.userFullImagePath = fullImagePath;
+  });
+
     this.authService.userFullName.pipe(take(1)).subscribe((fullName: string) => {
       this.fullName = fullName;
       this.fullName$.next(fullName);
-    });
-
-    this.userImagePathSubscription = this.authService.userFullImagePath
-      .subscribe((fullImagePath: string) => {
-        this.userFullImagePath = fullImagePath;
     });
   }
 

@@ -4,22 +4,26 @@ import { diskStorage } from 'multer';
 import { v4 as uuid4 } from 'uuid';
 import * as fileType from 'file-type';
 import * as fs from 'fs';
-import path from 'path';
+import * as path from 'path';
 
-// type validFileExtension = 'png' | 'jpg' | 'jpeg';
-// type validMimeType = 'image/png' | 'image/jpg' | 'image/jpeg';
+type validFileExtension = 'png' | 'jpg' | 'jpeg';
+type validMimeType = 'image/png' | 'image/jpg' | 'image/jpeg' | 'image/gif';
 
-const validFileExtensions = ['png', 'jpg', 'jpeg'];
-const validMimeTypes = ['image/png', 'image/jpg', 'image/jpeg'];
+const validFileExtensions: validFileExtension[] = ['png', 'jpg', 'jpeg'];
+const validMimeTypes: validMimeType[] = [
+  'image/png',
+  'image/jpg',
+  'image/jpeg',
+  'image/gif',
+];
 
 export const saveImageToStorage = {
   storage: diskStorage({
-    destination: '/images',
-    filename: (req, file, callback) => {
-      const fileExtension = path.extname(file.originalname);
-      const fileName = uuid4() + fileExtension;
-
-      callback(null, fileName);
+    destination: './images',
+    filename: (req, file, cb) => {
+      const fileExtension: string = path.extname(file.originalname);
+      const fileName: string = uuid4() + fileExtension;
+      cb(null, fileName);
     },
   }),
   fileFilter: (req, file, callback) => {
@@ -28,17 +32,14 @@ export const saveImageToStorage = {
       ? callback(null, true)
       : callback(null, false);
   },
-  limits: {
-    files: 1,
-  },
 };
 
-export const isFileExtensionSafe = (filePath: string): Observable<boolean> => {
-  return from(fileType.fileTypeFromFile(filePath)).pipe(
-    switchMap((fileExtensionAndMimeType: fileType.FileTypeResult) => {
-      if (fileExtensionAndMimeType) {
-        return of(false);
-      }
+export const isFileExtensionSafe = (
+  fullFilePath: string,
+): Observable<boolean> => {
+  return from(fileType.fromFile(fullFilePath)).pipe(
+    switchMap((fileExtensionAndMimeType: any) => {
+      if (!fileExtensionAndMimeType) return of(false);
 
       const isFileTypeLegit = validFileExtensions.includes(
         fileExtensionAndMimeType.ext,
@@ -46,9 +47,7 @@ export const isFileExtensionSafe = (filePath: string): Observable<boolean> => {
       const isMimeTypeLegit = validMimeTypes.includes(
         fileExtensionAndMimeType.mime,
       );
-
       const isFileLegit = isFileTypeLegit && isMimeTypeLegit;
-
       return of(isFileLegit);
     }),
   );

@@ -9,10 +9,12 @@ import { ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './guards/jwt.strategy';
 import { RolesGuard } from './guards/roles.guards';
 import { UserService } from './services/user.service';
+import { UserController } from './controllers/user.controller';
+import { FriendRequest } from './entities/friend-request.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, FriendRequest]),
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService) => ({
         secret: configService.get('JWT_SECRET'),
@@ -24,7 +26,7 @@ import { UserService } from './services/user.service';
     }),
   ],
   providers: [AuthService, JwtGuard, JwtStrategy, RolesGuard, UserService],
-  controllers: [AuthController],
+  controllers: [AuthController, UserController],
   exports: [AuthService, UserService],
 })
 export class AuthModule {}

@@ -1,19 +1,17 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { BehaviorSubject, Subscription, from, of } from 'rxjs';
-import { FileTypeResult, fileTypeFromBuffer } from 'file-type';
+import { FileTypeResult } from 'file-type';
+import { fromBuffer } from 'file-type/core';
 import { switchMap, take } from 'rxjs/operators';
 import { Role } from 'src/app/auth/models/user.model';
 import { AuthService } from 'src/app/auth/services/auth.service';
+import { BannerColorService } from '../../services/banner-color.service';
 
 type ValidFileExtension = 'png' | 'jpg' | 'jpeg';
 type ValidMimeType = 'image/png' | 'image/jpg' | 'image/jpeg';
 
-type BannerColors = {
-  colorOne: string
-  colorTwo: string
-  colorThree: string
-}
+
 
 @Component({
   selector: 'app-profile-summary',
@@ -26,11 +24,7 @@ export class ProfileSummaryComponent  implements OnInit, OnDestroy {
   validFileExtensions: ValidFileExtension[] = ['png', 'jpg', 'jpeg']
   validMimeTypes: ValidMimeType[] = ['image/png', 'image/jpg', 'image/jpeg']
 
-  bannerColors: BannerColors = {
-    colorOne: "#a0b4b7",
-    colorTwo: "#dbe7e9",
-    colorThree: "#bfd3d6"
-  }
+
 
   userFullImagePath: string;
   private userImagePathSubscription: Subscription;
@@ -38,7 +32,7 @@ export class ProfileSummaryComponent  implements OnInit, OnDestroy {
   fullName$ = new BehaviorSubject<string>(null!);
   fullName = '';
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, public bannerColorService: BannerColorService) { }
 
   ngOnInit() {
     this.authService.userFullName.pipe(take(1)).subscribe((fullName: string) => {
@@ -55,40 +49,12 @@ export class ProfileSummaryComponent  implements OnInit, OnDestroy {
     });
 
     this.authService.userRole.pipe(take(1)).subscribe((role: Role) => {
-      this.bannerColors = this.getBannerColors(role);
+      this.bannerColorService.bannerColors = this.bannerColorService.getBannerColors(role);
     })
   }
 
   ngOnDestroy(): void {
     this.userImagePathSubscription.unsubscribe();
-  }
-
-  private getBannerColors(role: Role): BannerColors {
-    switch (role) {
-      case 'admin':
-        return {
-          colorOne: '#daa520',
-          colorTwo: '#f0e68c',
-          colorThree: '#fafad2',
-        };
-
-      case 'premium':
-        return {
-          colorOne: '#bc8f8f',
-          colorTwo: '#c09999',
-          colorThree: '#ddadaf',
-        };
-
-      case 'user':
-        return {
-          colorOne: '#a0b4b7',
-          colorTwo: '#dbe7e9',
-          colorThree: '#bfd3d6',
-        };
-
-      default:
-        return this.bannerColors;
-    }
   }
 
   onFileSelect(event: Event): void {
@@ -101,7 +67,7 @@ export class ProfileSummaryComponent  implements OnInit, OnDestroy {
     from(file.arrayBuffer())
       .pipe(
         switchMap((buffer: ArrayBuffer) => {
-          return from(fileTypeFromBuffer(buffer)).pipe(
+          return from(fromBuffer(buffer)).pipe(
             switchMap((fileTypeResult: FileTypeResult | undefined) => {
               if (!fileTypeResult) {
                 // TODO: error handling

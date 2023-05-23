@@ -14,8 +14,11 @@
             <ion-icon name="home"></ion-icon>
             <div>Home</div>
           </ion-col>
-          <ion-col class="ion-hide-md-down" size="auto">
+          <ion-col (click)="this.connectionProfileService.friendRequests.length > 0 && presentFriendRequestsPopover($event)" class="ion-hide-md-down" size="auto">
             <ion-icon name="people"></ion-icon>
+            <ion-badge color="danger" class="badge">
+              {{ this.connectionProfileService.friendRequests?.length || 0 }}
+            </ion-badge>
             <div>My Network</div>
           </ion-col>
           <ion-col class="ion-hide-md-down" size="auto">
@@ -33,7 +36,7 @@
           </ion-col>
           <ion-col (click)="presentPopover($event)" size="auto">
             <ion-avatar>
-              <ion-img *ngIf="userFullImagePath" src="userFullImagePath"></ion-img>
+              <ion-img *ngIf="userFullImagePath" [src]="userFullImagePath"></ion-img>
             </ion-avatar>
             <div class="me">Me
               <ion-icon style="font-size: 16px;" name="caret-down-outline"></ion-icon>
