@@ -24,8 +24,6 @@ export class ProfileSummaryComponent  implements OnInit, OnDestroy {
   validFileExtensions: ValidFileExtension[] = ['png', 'jpg', 'jpeg']
   validMimeTypes: ValidMimeType[] = ['image/png', 'image/jpg', 'image/jpeg']
 
-
-
   userFullImagePath: string;
   private userImagePathSubscription: Subscription;
 

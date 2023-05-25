@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Observable, from, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { User } from '../entities/user.entity';
@@ -26,6 +26,9 @@ export class UserService {
       }),
     ).pipe(
       map((user: User) => {
+        if (!user) {
+          throw new HttpException('User not found.', HttpStatus.NOT_FOUND);
+        }
         delete user.password;
 
         return user;
@@ -43,6 +46,10 @@ export class UserService {
   findImageNameByUserId(id: number): Observable<string> {
     return from(this.userRepository.findOneBy({ id })).pipe(
       map((user: User) => {
+        if (!user) {
+          throw new HttpException('User not found.', HttpStatus.NOT_FOUND);
+        }
+
         delete user.password;
         return user.imagePath;
       }),

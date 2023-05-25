@@ -42,6 +42,7 @@ export class HeaderComponent  implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.userImagePathSubscription.unsubscribe();
+    this.friendRequestsSubscription.unsubscribe();
   }
 
   async presentPopover(e: Event) {

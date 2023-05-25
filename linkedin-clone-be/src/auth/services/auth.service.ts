@@ -69,6 +69,9 @@ export class AuthService {
       }),
     ).pipe(
       switchMap((user: User) => {
+        if (!user) {
+          throw new HttpException('User not found.', HttpStatus.NOT_FOUND);
+        }
         return from(bcrypt.compare(loginUserDto.password, user.password)).pipe(
           map((isValidPassword: boolean) => {
             if (!user || !isValidPassword) {
