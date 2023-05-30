@@ -34,7 +34,7 @@
             <ion-badge color="danger" class="badge">2</ion-badge>
             <div>Notifications</div>
           </ion-col>
-          <ion-col (click)="presentPopover($event)" size="auto">
+          <ion-col class="popover-menu" (click)="presentPopover($event)" size="auto">
             <ion-avatar>
               <ion-img *ngIf="userFullImagePath" [src]="userFullImagePath"></ion-img>
             </ion-avatar>

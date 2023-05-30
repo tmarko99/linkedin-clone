@@ -17,7 +17,7 @@ import { FeedService } from './feed.service';
 import { PostDto } from './dto/post.dto';
 import { Observable } from 'rxjs';
 import { FeedPost } from './post.entity';
-import { JwtGuard } from 'src/auth/guards/jwt.guard';
+import { JwtGuard } from '../auth/guards/jwt.guard';
 // import { Roles } from '../auth/decorators/roles.decorator';
 // import { Role } from 'src/auth/entities/role.enum';
 // import { RolesGuard } from 'src/auth/guards/roles.guards';

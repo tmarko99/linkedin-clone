@@ -1,11 +1,16 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
 
 import * as bcrypt from 'bcrypt';
-import { Observable, from } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { Observable, from, of } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { LoginUserDto } from '../dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
@@ -20,25 +25,36 @@ export class AuthService {
   createAccount(createUserDto: CreateUserDto): Observable<User> {
     const { firstName, lastName, email, password } = createUserDto;
 
-    return this.hashPassword(password)
-      .pipe(
-        switchMap((hashedPassword: string) => {
-          return from(
-            this.userRepository.save({
-              firstName,
-              lastName,
-              email,
-              password: hashedPassword,
+    return this.doesUserExists(email).pipe(
+      tap((doesUserExists: boolean) => {
+        if (doesUserExists) {
+          throw new ConflictException(
+            'A user has already been created with this email address',
+          );
+        }
+      }),
+      switchMap(() => {
+        return this.hashPassword(password)
+          .pipe(
+            switchMap((hashedPassword: string) => {
+              return from(
+                this.userRepository.save({
+                  firstName,
+                  lastName,
+                  email,
+                  password: hashedPassword,
+                }),
+              );
+            }),
+          )
+          .pipe(
+            map((user: User) => {
+              delete user.password;
+              return user;
             }),
           );
-        }),
-      )
-      .pipe(
-        map((user: User) => {
-          delete user.password;
-          return user;
-        }),
-      );
+      }),
+    );
   }
 
   login(loginUserDto: LoginUserDto): Observable<{ token: string }> {
@@ -84,6 +100,14 @@ export class AuthService {
             return user;
           }),
         );
+      }),
+    );
+  }
+
+  private doesUserExists(email: string): Observable<boolean> {
+    return from(this.userRepository.findOneBy({ email })).pipe(
+      switchMap((user: User) => {
+        return of(!!user);
       }),
     );
   }

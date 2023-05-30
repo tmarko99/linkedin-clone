@@ -8,7 +8,7 @@ export interface User {
   lastName: string;
   email: string;
   role: Role;
-  imagePath?: string;
-  fullImagePath?: string;
-  posts?: Post[];
+  imagePath?: string | null;
+  fullImagePath?: string | null;
+  posts?: Post[] | null;
 }

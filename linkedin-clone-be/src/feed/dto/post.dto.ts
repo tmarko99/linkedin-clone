@@ -1,8 +1,8 @@
-import { User } from 'src/auth/entities/user.entity';
+import { CreateUserDto } from './../../auth/dto/create-user.dto';
 
 export class PostDto {
   id?: number;
   body?: string;
-  createdAt?: string;
-  author?: User;
+  createdAt?: Date;
+  author?: CreateUserDto;
 }
